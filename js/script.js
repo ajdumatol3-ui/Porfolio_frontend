@@ -48,6 +48,7 @@
   document.querySelectorAll('.reveal').forEach(el => io.observe(el));
 
   /* Count-up numbers */
+  /* Count-up numbers */
   function countUp(el){
     const to = +el.dataset.to, start = performance.now(), dur = 1200;
     (function step(t){
