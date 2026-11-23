@@ -2,8 +2,7 @@
    Extra animations powered by anime.js (https://animejs.com)
    Library: js/vendor/anime.umd.min.js (v4.5.0, stored locally)
 
-   1. Hero headline: letters pop in, name wipes in, a hand-drawn
-      underline draws itself (SVG line drawing)
+   1. Hero headline: letters pop in, name slides in from a blur
    2. Section headings: letters rise from behind a mask on scroll
    3. Tool badges: slow, smooth spin on hover
    4. Hero skill badges (Illustrator / InDesign / Animate): drag them,
@@ -64,20 +63,6 @@
     hiLetters.forEach(c => { c.style.transform = 'translateY(110%)'; });
     if (name) { name.style.opacity = '0'; name.style.filter = 'blur(14px)'; }
 
-    // Hand-drawn underline under the name
-    const svgNS = 'http://www.w3.org/2000/svg';
-    const svg = document.createElementNS(svgNS, 'svg');
-    svg.setAttribute('class', 'scribble');
-    svg.setAttribute('viewBox', '0 0 420 28');
-    svg.setAttribute('aria-hidden', 'true');
-    const path = document.createElementNS(svgNS, 'path');
-    path.setAttribute('d', 'M6 18 C 70 6, 120 26, 190 14 S 300 4, 350 15 S 400 22, 414 9');
-    svg.appendChild(path);
-    h1.appendChild(svg);
-    const len = path.getTotalLength();
-    path.style.strokeDasharray = len;
-    path.style.strokeDashoffset = len;
-
     const playHero = () => {
       animate(hiLetters, {
         translateY: ['110%', '0%'],
@@ -95,7 +80,6 @@
         ease: 'outExpo',
         onComplete: () => { name.style.filter = ''; name.style.transform = ''; }
       });
-      animate(path, { strokeDashoffset: [len, 0], duration: 1100, delay: 1100, ease: 'inOutQuad' });
     };
     if (window.__introDone) playHero(); else document.addEventListener('intro:done', playHero, { once: true });
   }
