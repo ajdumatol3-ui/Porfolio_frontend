@@ -149,70 +149,110 @@
     badge.addEventListener('pointercancel', release);
   });
 
-  /* ---------- 5. Contact card: fireworks on click ---------- */
-  const card = document.querySelector('.contact');
-  if (card) {
-    // One fixed layer over the page, so sparks can fly outside the card
-    const sky = document.createElement('div');
-    sky.className = 'fw-layer';
-    sky.setAttribute('aria-hidden', 'true');
-    document.body.appendChild(sky);
+  /* ---------- 5. Fireworks on every click (canvas particle system) ----------
+     Real explosion physics, like a fireworks video:
+     - sparks fly out white-hot, then take on the shell's color
+     - each leaves a glowing light trail that melts away
+     - drag slows them, gravity pulls the trails into a droop, then they
+       flicker and burn out at different moments                            */
+  {
+    const cvs = document.createElement('canvas');
+    cvs.className = 'fw-layer';
+    cvs.setAttribute('aria-hidden', 'true');
+    document.body.appendChild(cvs);
+    const fx = cvs.getContext('2d');
+    const sizeCanvas = () => { cvs.width = innerWidth; cvs.height = innerHeight; };
+    sizeCanvas(); addEventListener('resize', sizeCanvas);
 
+    // Vivid festival colors: electric blue, magenta, gold, red, violet, green
     const palettes = [
-      ['#3e6aa3', '#7ea6d8', '#5b86c0', '#2f4f7f'],   // site blues
-      ['#ffb347', '#f5a623', '#ff7b54', '#e8590c'],   // gold / orange
-      ['#8f7bd8', '#b06ab3', '#e86fa8', '#6a4fc4'],   // purple / pink
-      ['#1fb6d6', '#3ec6e0', '#0e8fb0', '#5b86c0']    // cyan
+      ['#4d8dff', '#7fb0ff', '#b3d1ff', '#2e6fe8'],
+      ['#ff4fa3', '#ff7fc0', '#ff2e7e', '#ffb3d9'],
+      ['#ffd24d', '#ffe98a', '#ffb347', '#fff3b8'],
+      ['#ff5a3d', '#ff8a66', '#ff3d3d', '#ffc1a6'],
+      ['#b06aff', '#c89aff', '#8f4de8', '#e0c3ff'],
+      ['#64e08a', '#a0f0b4', '#3dc96a', '#d2ffd9']
     ];
-    const dot = (cls, x, y, color, size) => {
-      const p = document.createElement('i');
-      p.className = cls;
-      p.style.cssText = `left:${x}px;top:${y}px;width:${size}px;height:${size}px;background:${color};color:${color}`;
-      sky.appendChild(p);
-      return p;
-    };
+    let parts = [], running = false;
 
-    function burst(x, y) {
+    function burst(x, y, size = 1) {
       const colors = palettes[Math.floor(Math.random() * palettes.length)];
-      // bright flash ring
-      const ring = dot('fw-ring', x, y, 'transparent', 10);
-      ring.style.borderColor = colors[0];
-      animate(ring, { scale: [0, 9], opacity: [.9, 0], duration: 700, ease: 'outExpo', onComplete: () => ring.remove() });
-      // sparks flying out in a circle, then drifting down and fading
-      const count = 34;
-      for (let i = 0; i < count; i++) {
-        const angle = (i / count) * Math.PI * 2 + Math.random() * .2;
-        const dist = 70 + Math.random() * 80;
-        const dx = Math.cos(angle) * dist, dy = Math.sin(angle) * dist;
-        const s = dot('fw-spark', x, y, colors[i % colors.length], 4 + Math.random() * 4);
-        animate(s, {
-          translateX: [{ to: dx, duration: 800, ease: 'outExpo' }, { to: dx * 1.08, duration: 700, ease: 'linear' }],
-          translateY: [{ to: dy, duration: 800, ease: 'outExpo' }, { to: dy + 45, duration: 700, ease: 'inQuad' }],
-          scale: [{ to: 1, duration: 800 }, { to: .2, duration: 700 }],
-          opacity: [{ to: 1, duration: 800 }, { to: 0, duration: 700 }],
-          onComplete: () => s.remove()
+      const crackle = Math.random() < .45;   // some shells end in a glitter strobe
+      const R = Math.min(innerWidth, innerHeight) * .17 * size;
+      const v0 = R / 15;                     // launch speed tuned so drag stops them around R
+      const n = Math.round(70 * size);
+      for (let i = 0; i < n; i++) {
+        const a = (i / n) * Math.PI * 2 + Math.random() * .12;
+        const v = v0 * (.55 + Math.random() * .55);
+        parts.push({
+          x, y, px: x, py: y, trail: [],
+          vx: Math.cos(a) * v, vy: Math.sin(a) * v,
+          life: 1, decay: .0035 + Math.random() * .0035,
+          w: 1.4 + Math.random() * 1.2,
+          color: colors[i % colors.length],
+          hot: 5 + Math.random() * 7,        // white-hot frames right after the explosion
+          crackle
         });
       }
+      // the bright flash at the moment of detonation
+      parts.push({ x, y, px: x, py: y, vx: 0, vy: 0, life: 1, decay: .1, w: R * .3, color: '#fff', flash: true });
+      if (!running) { running = true; requestAnimationFrame(tick); }
     }
 
-    function launch(x, y) {
-      // the rocket rises from the bottom of the card to where you clicked
-      const r = card.getBoundingClientRect();
-      const startY = Math.max(y + 60, r.bottom - 10);
-      const rocket = dot('fw-rocket', x, startY, '#3e6aa3', 6);
-      animate(rocket, {
-        translateY: [0, y - startY],
-        opacity: [{ to: 1, duration: 420 }, { to: 0, duration: 80 }],
-        duration: 500,
-        ease: 'outQuad',
-        onComplete: () => { rocket.remove(); burst(x, y); }
-      });
+    function tick() {
+      // a clean slate every frame: trails are drawn per spark, so nothing can linger
+      fx.clearRect(0, 0, cvs.width, cvs.height);
+      fx.globalCompositeOperation = 'lighter';
+      fx.lineCap = 'round';
+      for (const p of parts) {
+        p.px = p.x; p.py = p.y;
+        if (!p.flash) { p.trail.push(p.x, p.y); if (p.trail.length > 22) p.trail.splice(0, 2); }
+        p.vx *= .955;
+        p.vy = p.vy * .955 + .085;           // drag + gravity
+        p.x += p.vx; p.y += p.vy;
+        p.life -= p.decay;
+        if (p.hot) p.hot--;
+        // steeper fade curve: bright for most of the life, then the ember dies quickly
+        let a = Math.pow(Math.max(p.life, 0), 1.8);
+        if (p.crackle && p.life < .45) a *= Math.random() < .55 ? 1 : .1;   // dying strobe
+        if (p.flash) {
+          fx.globalAlpha = a;
+          const g = fx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.w);
+          g.addColorStop(0, 'rgba(255,255,255,.95)');
+          g.addColorStop(1, 'rgba(255,255,255,0)');
+          fx.fillStyle = g;
+          fx.beginPath(); fx.arc(p.x, p.y, p.w, 0, 7); fx.fill();
+        } else {
+          // the glowing trail behind the spark, brightest near the head
+          const t = p.trail;
+          fx.strokeStyle = p.color;
+          for (let k = 0; k + 3 < t.length; k += 2) {
+            const f = (k + 2) / t.length;
+            fx.globalAlpha = a * f * .45;
+            fx.lineWidth = p.w * (.5 + f * .7);
+            fx.beginPath(); fx.moveTo(t[k], t[k + 1]); fx.lineTo(t[k + 2], t[k + 3]); fx.stroke();
+          }
+          // bright head: white-hot right after the blast, then the shell's color
+          fx.strokeStyle = p.hot ? '#fff' : p.color; fx.lineWidth = p.w; fx.globalAlpha = a;
+          fx.beginPath(); fx.moveTo(p.px, p.py); fx.lineTo(p.x, p.y); fx.stroke();
+        }
+      }
+      fx.globalAlpha = 1;
+      fx.globalCompositeOperation = 'source-over';
+      parts = parts.filter(p => p.life > .1 && p.y < cvs.height + 30);
+      if (parts.length) requestAnimationFrame(tick);
+      else { running = false; fx.clearRect(0, 0, cvs.width, cvs.height); }
     }
 
-    card.addEventListener('click', e => {
-      launch(e.clientX, e.clientY);
-      // a second, smaller firework nearby for extra sparkle
-      setTimeout(() => burst(e.clientX + (Math.random() - .5) * 160, e.clientY - 30 - Math.random() * 50), 650);
+    document.addEventListener('click', e => {
+      if (parts.length > 900) return;   // don't flood the sky on rapid clicks
+      // a shell right where you clicked
+      burst(e.clientX, e.clientY);
+      // clicking the contact card gives a full finale across the sky
+      if (e.target.closest && e.target.closest('.contact')) {
+        setTimeout(() => burst(innerWidth * (.14 + Math.random() * .14), e.clientY - 80 - Math.random() * 140, .7), 500);
+        setTimeout(() => burst(innerWidth * (.72 + Math.random() * .14), e.clientY - 60 - Math.random() * 160, .8), 850);
+      }
     });
   }
 })();
