@@ -13,7 +13,22 @@
 <meta name="authoring-tool" content="Adobe_Animate_CC">
 <title>Word_Blaster_Typing_Game</title>
 <!-- write your code here -->
-<script src="https://code.createjs.com/1.0.0/createjs.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<!-- CreateJS is stored locally so the game works even if the CDN is slow or blocked -->
+<script src="lib/createjs.min.js"></script>
+<script>if (!window.createjs) document.write('<script src="https://code.createjs.com/1.0.0/createjs.min.js"><\/script>');</script>
+<style>
+	html,body{margin:0;overflow:hidden;width:100%;height:100%;background:#060a1c}
+	/* Helpers added for the portfolio: focus hint + phone keyboard */
+	#focusHint{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);z-index:20;display:none;
+		font:600 15px/1 Arial,sans-serif;color:#0b1430;background:#7fe7ff;padding:10px 16px;border-radius:999px;
+		box-shadow:0 6px 18px rgba(0,0,0,.4);cursor:pointer;white-space:nowrap}
+	body.blurred #focusHint{display:block}
+	#typeBtn{position:fixed;right:12px;bottom:12px;z-index:20;display:none;font:700 15px/1 Arial,sans-serif;color:#fff;
+		background:rgba(127,231,255,.18);border:2px solid #7fe7ff;padding:11px 14px;border-radius:12px}
+	body.touch #typeBtn{display:block}
+	#mobileType{position:fixed;left:0;bottom:0;width:1px;height:1px;opacity:0;border:0;padding:0;font-size:16px;z-index:-1}
+</style>
 <script src="Word_Blaster_Typing_Game.js?1794287733523"></script>
 <script>
 var canvas, stage, exportRoot, anim_container, dom_overlay_container, fnStartAnimation;
@@ -52,5 +67,48 @@ function handleComplete(evt,comp) {
 		<div id="dom_overlay_container" style="pointer-events:none; overflow:hidden; width:720px; height:960px; position: absolute; left: 0px; top: 0px; display: block;">
 		</div>
 	</div>
+
+	<div id="focusHint">Click the game to keep typing</div>
+	<button id="typeBtn" type="button">⌨ Type</button>
+	<input id="mobileType" type="text" autocapitalize="off" autocomplete="off" autocorrect="off" spellcheck="false" aria-label="Type the words here">
+
+	<script>
+	/* ---- Keyboard focus: show a hint when the game is not receiving keys ---- */
+	(function () {
+		var body = document.body;
+		var touch = matchMedia('(hover: none), (pointer: coarse)').matches;
+		if (touch) body.classList.add('touch');
+
+		if (!touch) {
+			addEventListener('blur', function () { body.classList.add('blurred'); });
+			addEventListener('focus', function () { body.classList.remove('blurred'); });
+			document.addEventListener('mousedown', function () { window.focus(); });
+			document.getElementById('focusHint').addEventListener('click', function () { window.focus(); });
+		}
+
+		/* ---- Phones/tablets: open the on-screen keyboard and pass letters to the game ---- */
+		var inp = document.getElementById('mobileType');
+		function sendKey(key) { document.dispatchEvent(new KeyboardEvent('keydown', { key: key, bubbles: true })); }
+		function openKeyboard() { inp.focus({ preventScroll: true }); }
+		var realKeyDown = false;
+		// A hardware keyboard sends real letter keys, which already reach the game.
+		inp.addEventListener('keydown', function (e) {
+			realKeyDown = e.key && e.key.length === 1 && e.key !== 'Unidentified';
+		});
+		inp.addEventListener('input', function () {
+			var v = inp.value; inp.value = '';
+			if (realKeyDown) { realKeyDown = false; return; }
+			for (var i = 0; i < v.length; i++) {
+				var ch = v.charAt(i).toLowerCase();
+				if (ch >= 'a' && ch <= 'z') sendKey(ch);
+			}
+		});
+		if (touch) {
+			document.getElementById('typeBtn').addEventListener('click', openKeyboard);
+			// Tapping the game (e.g. START GAME) also opens the keyboard
+			document.getElementById('canvas').addEventListener('touchend', function () { setTimeout(openKeyboard, 50); });
+		}
+	})();
+	</script>
 </body>
 </html>

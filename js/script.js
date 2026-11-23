@@ -2,11 +2,15 @@
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   /* Loader */
+  /* Keep the name intro on screen until its animation has played (about 2.4s),
+     or until the page finishes loading, whichever is later. */
+  const introStart = performance.now(), introLength = reduce ? 0 : 2400;
   window.addEventListener('load', () => {
+    const wait = Math.max(0, introLength - (performance.now() - introStart));
     setTimeout(() => {
       document.getElementById('loader').classList.add('done');
       document.body.classList.remove('loading');
-    }, reduce ? 0 : 700);
+    }, wait);
   });
 
   /* Scroll: progress bar, nav, back-to-top, active link */
@@ -24,13 +28,41 @@
     sections.forEach((s, i) => { if (s && s.getBoundingClientRect().top < innerHeight * .4) current = i; });
     links.forEach((a, i) => a.classList.toggle('active', i === current));
   }
-  addEventListener('scroll', onScroll, {passive:true}); onScroll();
+  addEventListener('scroll', onScroll, {passive:true});
+
+  /* Auto-hide nav: always visible on the first screen (hero).
+     Further down it hides, and shows again when the mouse comes near the top,
+     hovers the nav, the keyboard focuses it, or (on touch screens) when scrolling up. */
+  const hero = document.getElementById('top');
+  const noHover = matchMedia('(hover: none)').matches;
+  let mouseNear = false, navHover = false, lastY = scrollY, scrollingUp = false;
+  function updateNav(){
+    const pastHero = scrollY > (hero ? hero.offsetHeight - 120 : innerHeight * .8);
+    const show = !pastHero || mouseNear || navHover || nav.contains(document.activeElement)
+      || document.getElementById('menu').classList.contains('open') || (noHover && scrollingUp);
+    nav.classList.toggle('hide', !show);
+  }
+  addEventListener('scroll', () => {
+    const y = scrollY;
+    if (Math.abs(y - lastY) > 6) { scrollingUp = y < lastY; lastY = y; }
+    updateNav();
+  }, {passive:true});
+  document.addEventListener('mousemove', e => {
+    const near = e.clientY < 90;
+    if (near !== mouseNear) { mouseNear = near; updateNav(); }
+  });
+  document.addEventListener('mouseleave', () => { mouseNear = false; updateNav(); });
+  nav.addEventListener('mouseenter', () => { navHover = true; updateNav(); });
+  nav.addEventListener('mouseleave', () => { navHover = false; updateNav(); });
+  nav.addEventListener('focusin', updateNav);
+  nav.addEventListener('focusout', () => setTimeout(updateNav, 0));
+  onScroll(); updateNav();
   toTop.addEventListener('click', () => scrollTo({top:0, behavior:'smooth'}));
 
   /* Mobile menu */
   const menuBtn = document.getElementById('menuBtn'), menu = document.getElementById('menu');
   menuBtn.addEventListener('click', () => { menu.classList.toggle('open'); menuBtn.classList.toggle('open'); });
-  links.forEach(a => a.addEventListener('click', () => { menu.classList.remove('open'); menuBtn.classList.remove('open'); }));
+  links.forEach(a => a.addEventListener('click', () => { menu.classList.remove('open'); menuBtn.classList.remove('open'); a.blur(); }));
 
   /* Reveal on scroll (with stagger for siblings) */
   const io = new IntersectionObserver(entries => {
@@ -59,7 +91,7 @@
   }
 
   /* Typing effect */
-  const words = ['Graphic Designer', 'IT Student', 'Illustrator Artist', 'Graphic Designer', 'Future Game Developer'];
+  const words = ['Graphic Designer', 'IT Student', 'Web Developer', 'Illustrator Artist', 'Anime Artist', 'Future Game Developer'];
   const typed = document.getElementById('typed');
   let w = 0, c = 0, del = false;
   function type(){
@@ -106,6 +138,22 @@
     el.addEventListener('mouseleave', () => el.style.transform = '');
   }
   tilt(document.getElementById('photo'), 14);
+
+  /* Hero photo stack: click to shuffle the front photo to the back */
+  const stack = document.getElementById('photo');
+  let swapping = false;
+  function swapPhoto(){
+    if (swapping) return;
+    const front = stack.querySelector('.front'), back = stack.querySelector('.back');
+    front.classList.replace('front', 'back');
+    back.classList.replace('back', 'front');
+    if (reduce) return;
+    swapping = true;
+    front.classList.add('to-back');
+    setTimeout(() => { front.classList.remove('to-back'); swapping = false; }, 700);
+  }
+  stack.addEventListener('click', swapPhoto);
+  stack.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); swapPhoto(); } });
   document.querySelectorAll('.tilt').forEach(el => tilt(el, 12));
 
   /* Animated low-poly background in hero */
@@ -143,15 +191,57 @@
   if (!reduce) drawPoly();
 
   /* Lightbox for gallery and projects */
+  /* Magazine page flipper (InDesign project) */
+  const magThumbs = [...document.querySelectorAll('#magThumbs button')];
+  const magImg = document.getElementById('magImg');
+  let magIdx = 0, magSwiped = false;
+  function magGo(i){
+    if (!magImg) return;
+    const next = (i + magThumbs.length) % magThumbs.length;
+    if (next === magIdx) return;
+    const dir = next > magIdx ? 'turn-next' : 'turn-prev';
+    magIdx = next;
+    const b = magThumbs[magIdx];
+    document.getElementById('magNum').textContent = magIdx + 1;
+    document.getElementById('magTitle').textContent = b.dataset.title;
+    magThumbs.forEach(t => t.classList.toggle('active', t === b));
+    b.scrollIntoView({block:'nearest', inline:'center', behavior: reduce ? 'auto' : 'smooth'});
+    const swap = () => { magImg.src = b.dataset.src; magImg.alt = `Magazine page ${magIdx + 1}: ${b.dataset.title}`; magImg.classList.remove('turn-next', 'turn-prev'); };
+    if (reduce) return swap();
+    magImg.classList.add(dir);
+    setTimeout(swap, 200);
+  }
+  if (magImg) {
+    document.getElementById('magTotal').textContent = magThumbs.length;
+    document.getElementById('magPrev').addEventListener('click', () => magGo(magIdx - 1));
+    document.getElementById('magNext').addEventListener('click', () => magGo(magIdx + 1));
+    magThumbs.forEach((t, i) => t.addEventListener('click', () => magGo(i)));
+    let sx = null; /* swipe on phones */
+    magImg.addEventListener('touchstart', e => sx = e.touches[0].clientX, {passive:true});
+    magImg.addEventListener('touchend', e => {
+      if (sx === null) return;
+      const dx = e.changedTouches[0].clientX - sx; sx = null;
+      if (Math.abs(dx) > 40) { magSwiped = true; setTimeout(() => magSwiped = false, 400); magGo(magIdx + (dx < 0 ? 1 : -1)); }
+    });
+  }
+
+  const magItems = magThumbs.map((b, i) => ({src:b.dataset.src, cap:`Our Academic Design Works, page ${i + 1}: ${b.dataset.title} (Adobe InDesign)`}));
   const items = [
-    ...[...document.querySelectorAll('.tilt')].map(t => ({el:t, src:t.dataset.full, cap:t.dataset.cap})),
+    ...[...document.querySelectorAll('.tilt:not(.cover)')].map(t => ({el:t, src:t.dataset.full, cap:t.dataset.cap})),
+    ...magItems,
+    ...[...document.querySelectorAll('.art-grid figure, .exhibit-grid figure')].map(f => ({el:f, src:f.querySelector('img').src, cap:f.querySelector('figcaption').textContent + ' (traditional art)'})),
     ...[...document.querySelectorAll('.cert')].map(c => ({el:c, src:c.dataset.full, cap:c.dataset.cap})),
     ...[...document.querySelectorAll('.gallery figure')].map(f => ({el:f, src:f.querySelector('img').src, cap:f.querySelector('figcaption').textContent}))
   ];
   const lb = document.getElementById('lb'), lbImg = document.getElementById('lbImg'), lbCap = document.getElementById('lbCap');
   let idx = 0;
   function show(i){ idx = (i + items.length) % items.length; lbImg.src = items[idx].src; lbImg.alt = items[idx].cap; lbCap.textContent = items[idx].cap; }
-  items.forEach((it, i) => it.el.addEventListener('click', () => { show(i); lb.classList.add('open'); }));
+  items.forEach((it, i) => it.el && it.el.addEventListener('click', () => { show(i); lb.classList.add('open'); }));
+  const cover = document.querySelector('.tilt.cover');
+  if (cover) cover.addEventListener('click', () => {
+    if (magSwiped) { magSwiped = false; return; }
+    show(items.indexOf(magItems[magIdx])); lb.classList.add('open');
+  });
   const close = () => lb.classList.remove('open');
   document.getElementById('lbClose').addEventListener('click', close);
   document.getElementById('lbPrev').addEventListener('click', e => { e.stopPropagation(); show(idx - 1); });
@@ -175,12 +265,33 @@
 
   /* Load the game only when asked (keeps the page fast) */
   const gameStart = document.getElementById('gameStart');
-  if (gameStart) gameStart.addEventListener('click', () => {
-    const frame = document.createElement('iframe');
-    frame.src = 'games/word-blaster/index.html';
-    frame.title = 'Word Blaster Typing Game';
-    frame.setAttribute('allow', 'autoplay; fullscreen');
-    gameStart.replaceWith(frame);
-    frame.addEventListener('load', () => frame.focus());
+  const gameBox = document.getElementById('gameFrame');
+  let gameIframe = null;
+  function loadGame(){
+    if (gameIframe) return gameIframe;
+    gameIframe = document.createElement('iframe');
+    gameIframe.src = 'games/word-blaster/index.html';
+    gameIframe.title = 'Word Blaster Typing Game';
+    gameIframe.setAttribute('allow', 'autoplay; fullscreen');
+    gameStart.replaceWith(gameIframe);
+    // Give the game keyboard focus as soon as it loads, so typing works right away
+    gameIframe.addEventListener('load', focusGame);
+    return gameIframe;
+  }
+  function focusGame(){
+    if (!gameIframe) return;
+    gameIframe.focus();
+    try { gameIframe.contentWindow.focus(); } catch (e) {}
+  }
+  if (gameStart) gameStart.addEventListener('click', loadGame);
+
+  /* Fullscreen: enlarge the game box (works on the page, no new tab) */
+  const gameFull = document.getElementById('gameFull');
+  if (gameFull && gameBox) gameFull.addEventListener('click', () => {
+    loadGame();
+    const req = gameBox.requestFullscreen || gameBox.webkitRequestFullscreen;
+    if (req) { const p = req.call(gameBox); if (p && p.then) p.then(() => setTimeout(focusGame, 100)).catch(() => {}); }
+    else window.open('games/word-blaster/index.html', '_blank');
+    setTimeout(focusGame, 300);
   });
 })();

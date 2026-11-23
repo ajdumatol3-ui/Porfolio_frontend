@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Arbrent John Dumat-ol — Portfolio</title>
-<meta name="description" content="Arbrent John Dumat-ol: BS Information Technology student at NORSU-BSC and graphic designer working in Adobe Illustrator and InDesign.">
+<meta name="description" content="Arbrent John Dumat-ol: BS Information Technology student at NORSU-BSC, web developer, graphic designer working in Adobe Illustrator and InDesign, and anime-inspired traditional artist.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
@@ -13,8 +13,17 @@
 <body class="loading">
 
 <div class="loader" id="loader">
-  <div style="text-align:center">
-    <div class="loader-logo"><span>A</span><span>J</span><span>D</span></div>
+  <div class="loader-inner">
+    <div class="loader-logo" aria-label="Arbrent John Dumat-ol">
+      <div class="l-line">
+        <span class="l-word"><span style="--i:0">A</span><span style="--i:1">R</span><span style="--i:2">B</span><span style="--i:3">R</span><span style="--i:4">E</span><span style="--i:5">N</span><span style="--i:6">T</span></span>
+        <span class="l-word"><span style="--i:7">J</span><span style="--i:8">O</span><span style="--i:9">H</span><span style="--i:10">N</span></span>
+      </div>
+      <div class="l-line l-last">
+        <span class="l-word"><span style="--i:11">D</span><span style="--i:12">U</span><span style="--i:13">M</span><span style="--i:14">A</span><span style="--i:15">T</span><span style="--i:16">-</span><span style="--i:17">O</span><span style="--i:18">L</span></span>
+      </div>
+    </div>
+    <p class="loader-tag">Web Developer · Graphic Designer · Artist</p>
     <div class="loader-bar"><i></i></div>
   </div>
 </div>
@@ -23,9 +32,10 @@
 
 <nav id="nav">
   <div class="wrap">
-    <a class="logo" href="#top">Arbrent<span>.</span></a>
+    <a class="logo" href="#top">AJD<span>.</span></a>
     <button class="menu-btn" id="menuBtn" aria-label="Open menu"><i></i><i></i><i></i></button>
     <ul id="menu">
+      <li><a href="#top">Home</a></li>
       <li><a href="#about">About</a></li>
       <li><a href="#tools">Tools</a></li>
       <li><a href="#work">Work</a></li>
@@ -45,7 +55,7 @@
       <span class="tag reveal"><span class="dot"></span>BSINT · 3rd Year · NORSU-BSC</span>
       <h1 class="reveal">Hi, I'm<span class="name">Arbrent John Dumat-ol</span></h1>
       <div class="typed reveal">I'm a <b id="typed"></b><span class="caret"></span></div>
-      <p class="reveal">An Information Technology student who turns ideas into clean visuals, from low-poly illustrations in Adobe Illustrator to magazine layouts in InDesign.</p>
+      <p class="reveal">An Information Technology student and web developer who turns ideas into clean visuals and working websites, from low-poly illustrations in Adobe Illustrator to magazine layouts in InDesign. Off the screen, I'm a traditional artist inspired by anime, drawing characters by hand in graphite, colored pencil and ballpoint pen.</p>
       <div class="btns reveal">
         <a class="btn btn-main" href="#work">See my work</a>
         <a class="btn btn-ghost" href="#contact">Get in touch</a>
@@ -53,7 +63,11 @@
     </div>
     <div class="photo-wrap reveal zoom">
       <div class="photo-ring"></div>
-      <div class="photo" id="photo"><img src="images/arbrent.jpg" alt="Arbrent John Dumat-ol"></div>
+      <div class="photo-stack" id="photo" role="button" tabindex="0" aria-label="Switch photo">
+        <div class="photo front"><img src="images/arbrent.jpg" alt="Arbrent John Dumat-ol"></div>
+        <div class="photo back"><img src="images/arbrent-2.jpg" alt="Arbrent John Dumat-ol looking to the side"></div>
+      </div>
+      <span class="swap-hint">↻ Click to switch</span>
       <div class="float-badge fb1"><span class="sw ai">Ai</span>Illustrator</div>
       <div class="float-badge fb2"><span class="sw id">Id</span>InDesign</div>
       <div class="float-badge fb3"><span class="sw an">An</span>Animate</div>
@@ -67,16 +81,22 @@
     <p class="eyebrow reveal">About me</p>
     <h2 class="reveal">A student who codes and designs.</h2>
     <div class="about-grid">
-      <div class="reveal left">
-        <p>I'm <strong>Arbrent John Dumat-ol</strong>, a 23-year-old 3rd year student taking the <strong>Bachelor of Science in Information Technology (BSINT)</strong> at <strong>Negros Oriental State University – Bayawan-Sta. Catalina Campus (NORSU-BSC)</strong>.</p>
-        <p>Alongside my IT studies, I do graphic design: illustrations, posters, logos and publication layouts using Adobe Illustrator, InDesign and other creative tools.</p>
-        <p>I enjoy the space where design meets technology, making things that look good and work well.</p>
+      <div class="about-photo reveal left">
+        <div class="tilt" data-full="images/arbrent-suit.jpg" data-cap="Arbrent John Dumat-ol">
+          <img src="images/arbrent-suit.jpg" alt="Arbrent John Dumat-ol in a black suit and tie" loading="lazy"><div class="shine"></div>
+        </div>
       </div>
-      <div class="facts reveal right">
-        <div class="fact"><strong><span class="count" data-to="23">0</span></strong><span>years old</span></div>
-        <div class="fact"><strong><span class="count" data-to="3">0</span>rd</strong><span>year college</span></div>
-        <div class="fact"><strong>BSINT</strong><span>Information Technology</span></div>
-        <div class="fact"><strong>NORSU</strong><span>Bayawan-Sta. Catalina</span></div>
+      <div class="about-text reveal right">
+        <p>I'm <strong>Arbrent John Dumat-ol</strong>, a 3rd year student taking the <strong>Bachelor of Science in Information Technology (BSINT)</strong> at <strong>Negros Oriental State University – Bayawan-Sta. Catalina Campus (NORSU-BSC)</strong>.</p>
+        <p>I'm also a <strong>web developer</strong>. I build responsive websites with HTML, CSS and JavaScript, like this portfolio, focusing on clean layouts, smooth animations and pages that work well on both desktop and mobile.</p>
+        <p>Alongside my IT studies, I do graphic design: illustrations, posters, logos and publication layouts using Adobe Illustrator, InDesign and other creative tools.</p>
+        <p>I'm also a traditional artist. I draw anime-style characters by hand with graphite, colored pencils and ballpoint pen, and some of my drawings have been shown in a school exhibit.</p>
+        <p>I enjoy the space where design meets technology, making things that look good and work well.</p>
+        <div class="facts">
+          <div class="fact"><strong><span class="count" data-to="3">0</span>rd</strong><span>year college</span></div>
+          <div class="fact"><strong>BSINT</strong><span>Information Technology</span></div>
+          <div class="fact"><strong>NORSU</strong><span>Bayawan-Sta. Catalina</span></div>
+        </div>
       </div>
     </div>
   </div>
@@ -92,7 +112,7 @@
       <div class="tool reveal"><div class="badge id">Id</div><h3>Adobe InDesign</h3><p>Magazine covers, booklets and print-ready layouts.</p><div class="meter"><i data-w="82%"></i></div></div>
       <div class="tool reveal"><div class="badge an">An</div><h3>Adobe Animate</h3><p>2D animation and interactive HTML5 games with ActionScript and JavaScript.</p><div class="meter"><i data-w="80%"></i></div></div>
       <div class="tool reveal"><div class="badge ps">Ps</div><h3>Adobe Photoshop</h3><p>Photo editing, compositing and social media visuals.</p><div class="meter"><i data-w="75%"></i></div></div>
-      <div class="tool reveal"><div class="badge web">&lt;/&gt;</div><h3>Web &amp; IT</h3><p>HTML, CSS, JavaScript and the foundations from my IT program.</p><div class="meter"><i data-w="70%"></i></div></div>
+      <div class="tool reveal"><div class="badge web">&lt;/&gt;</div><h3>Web Development</h3><p>Responsive websites with HTML, CSS and JavaScript: layouts, animations and interactive features.</p><div class="meter"><i data-w="70%"></i></div></div>
     </div>
   </div>
 </section>
@@ -101,7 +121,7 @@
   <div class="wrap">
     <p class="eyebrow reveal">Selected work</p>
     <h2 class="reveal">Design projects.</h2>
-    <p class="lead reveal">Highlights from my academic design work. Click an image to view it full size.</p>
+    <p class="lead reveal">Highlights from my academic design work and hand-drawn art. Click an image to view it full size.</p>
 
     <div class="project">
       <div class="p-media reveal left">
@@ -120,15 +140,39 @@
 
     <div class="project flip">
       <div class="p-media reveal right">
-        <div class="tilt cover" data-full="images/design-works-cover.jpg" data-cap="Our Academic Design Works: magazine cover (Adobe InDesign)">
-          <img src="images/design-works-cover.jpg" alt="Magazine cover titled Our Academic Design Works with a pink moon and cherry blossoms" loading="lazy"><div class="shine"></div>
+        <div class="mag" id="mag">
+          <div class="mag-stage">
+            <div class="tilt cover">
+              <img id="magImg" src="images/design-works-cover.jpg" alt="Magazine cover titled Our Academic Design Works with a pink moon and cherry blossoms" loading="lazy"><div class="shine"></div>
+            </div>
+            <button class="mag-btn prev" id="magPrev" aria-label="Previous page">‹</button>
+            <button class="mag-btn next" id="magNext" aria-label="Next page">›</button>
+          </div>
+          <div class="mag-ctrl">
+            <span class="mag-count"><b id="magNum">1</b> / <span id="magTotal">12</span> · <span id="magTitle">Cover</span></span>
+          </div>
+          <div class="mag-thumbs" id="magThumbs">
+            <button class="active" data-src="images/design-works-cover.jpg" data-title="Cover"><img src="images/magazine/thumb-01.jpg" alt="Page 1: Cover"></button>
+            <button data-src="images/magazine/page-02.jpg" data-title="Table of Contents"><img src="images/magazine/thumb-02.jpg" alt="Page 2: Table of Contents" loading="lazy"></button>
+            <button data-src="images/magazine/page-03.jpg" data-title="Adobe Photoshop"><img src="images/magazine/thumb-03.jpg" alt="Page 3: Adobe Photoshop" loading="lazy"></button>
+            <button data-src="images/magazine/page-04.jpg" data-title="Typography"><img src="images/magazine/thumb-04.jpg" alt="Page 4: Typography" loading="lazy"></button>
+            <button data-src="images/magazine/page-05.jpg" data-title="Logo"><img src="images/magazine/thumb-05.jpg" alt="Page 5: Logo" loading="lazy"></button>
+            <button data-src="images/magazine/page-06.jpg" data-title="Poster"><img src="images/magazine/thumb-06.jpg" alt="Page 6: Poster" loading="lazy"></button>
+            <button data-src="images/magazine/page-07.jpg" data-title="Adobe Illustrator"><img src="images/magazine/thumb-07.jpg" alt="Page 7: Adobe Illustrator" loading="lazy"></button>
+            <button data-src="images/magazine/page-08.jpg" data-title="Letter Monster"><img src="images/magazine/thumb-08.jpg" alt="Page 8: Letter Monster" loading="lazy"></button>
+            <button data-src="images/magazine/page-09.jpg" data-title="Comics"><img src="images/magazine/thumb-09.jpg" alt="Page 9: Comics" loading="lazy"></button>
+            <button data-src="images/magazine/page-10.jpg" data-title="Polygonal Wild Animal"><img src="images/magazine/thumb-10.jpg" alt="Page 10: Polygonal Wild Animal" loading="lazy"></button>
+            <button data-src="images/magazine/page-11.jpg" data-title="Reflection"><img src="images/magazine/thumb-11.jpg" alt="Page 11: Reflection" loading="lazy"></button>
+            <button data-src="images/magazine/page-12.jpg" data-title="Class of 2026"><img src="images/magazine/thumb-12.jpg" alt="Page 12: Class of 2026" loading="lazy"></button>
+          </div>
         </div>
       </div>
       <div class="reveal left">
         <div class="p-num">02</div>
         <span class="p-kind k-id">Adobe InDesign</span>
         <h3>Our Academic Design Works</h3>
-        <p>The cover page of our design magazine for ITS 208: Graphics and Visual Computing, Class 2026. A starry night background meets a pink moon and cherry blossoms. Bold serif type and Japanese and Korean accents carry the theme <em>"Design × Technology × Creativity."</em></p>
+        <p>Our 12-page design magazine for ITS 208: Graphics and Visual Computing, Class 2026, laid out in Adobe InDesign. A starry night background, a pink moon and cherry blossoms carry the theme <em>"Design × Technology × Creativity."</em> Inside are our Photoshop and Illustrator works: typography, logos, posters, letter monsters, comics and polygonal animals.</p>
+        <p class="mag-tip">Use the arrows or the page strip to flip through it, or click a page to view it full size.</p>
         <div class="chips"><span>Editorial</span><span>Magazine cover</span><span>Typography</span><span>Layout</span></div>
       </div>
     </div>
@@ -145,10 +189,14 @@
               <button class="game-start" id="gameStart">
                 <span class="game-start-icon">▶</span>
                 <strong>WORD BLASTER</strong>
-                <small>Click to load the game</small>
+                <small>Click to play</small>
               </button>
             </div>
-            <a class="game-open" href="games/word-blaster/index.html" target="_blank" rel="noopener">Open full screen ↗</a>
+            <div class="game-bar">
+              <span class="game-keys">⌨ Type letters to shoot · Enter = EMP · Esc = pause</span>
+              <button class="game-full" id="gameFull" type="button">⛶ Fullscreen</button>
+            </div>
+            <a class="game-open" href="games/word-blaster/index.html" target="_blank" rel="noopener">Open in a new tab ↗</a>
           </div>
           <div class="game-pane" data-pane="video">
             <video class="game-video" controls preload="metadata" playsinline>
@@ -165,6 +213,42 @@
         <p>An interactive typing game I built in Adobe Animate and exported to HTML5 Canvas. Words fall from space, and you blast them by typing each one correctly before it reaches the bottom. It mixes animation with game logic: scoring, levels and keyboard input.</p>
         <p>Play it right here, or watch the recorded demo.</p>
         <div class="chips"><span>Game design</span><span>HTML5 Canvas</span><span>JavaScript</span><span>Animation</span></div>
+      </div>
+    </div>
+
+    <div class="art-project">
+      <div class="art-head reveal">
+        <div class="p-num">04</div>
+        <span class="p-kind k-art">✎ Traditional Art</span>
+        <h3>Anime Drawings</h3>
+        <p>Away from the screen, I'm a traditional artist. I draw by hand with <strong>graphite pencils</strong>, <strong>colored pencils</strong> and <strong>ballpoint pens</strong>. Most of my work is anime-style: character portraits with expressive eyes, detailed hair and shading built up stroke by stroke.</p>
+        <div class="chips"><span>Graphite</span><span>Colored pencil</span><span>Ballpoint pen</span><span>Anime</span><span>Character portraits</span></div>
+      </div>
+
+      <div class="art-grid">
+        <figure class="reveal zoom"><img src="images/art/art-01.jpg" alt="Colored pencil anime portrait of a blond character in a blue shirt" loading="lazy"><span class="medium m-color">Colored pencil</span><figcaption>Loid Forger</figcaption></figure>
+        <figure class="reveal zoom"><img src="images/art/art-04.jpg" alt="Colored pencil drawing of a close-up anime eye with a fiery reflection" loading="lazy"><span class="medium m-color">Colored pencil</span><figcaption>Tanjiro in Akaza Eye</figcaption></figure>
+        <figure class="reveal zoom"><img src="images/art/art-13.jpg" alt="Ballpoint pen drawing of an anime soccer player with blue hair and a soccer ball" loading="lazy" style="object-position:center 70%"><span class="medium m-pen">Ballpoint pen</span><figcaption>Isagi Yoichi</figcaption></figure>
+        <figure class="reveal zoom"><img src="images/art/art-14.jpg" alt="Ballpoint pen drawing of a dark-haired anime character with glowing eyes on lined paper" loading="lazy"><span class="medium m-pen">Ballpoint pen</span><figcaption>Sung Jin-Woo</figcaption></figure>
+        <figure class="reveal zoom"><img src="images/art/art-15.jpg" alt="Ballpoint pen drawing of an anime character in a hoodie on yellow paper" loading="lazy" style="object-position:center 60%"><span class="medium m-pen">Ballpoint pen</span><figcaption>E-Rank Sung Jin-Woo</figcaption></figure>
+        <figure class="reveal zoom"><img src="images/art/art-02.jpg" alt="Graphite anime sketch of a character with wavy hair on notebook paper" loading="lazy"><span class="medium">Graphite</span><figcaption>Sae Itoshi</figcaption></figure>
+        <figure class="reveal zoom"><img src="images/art/art-03.jpg" alt="Graphite drawing of an anime character in a school blazer" loading="lazy"><span class="medium">Graphite</span><figcaption>Ron Kamonohashi</figcaption></figure>
+        <figure class="reveal zoom"><img src="images/art/art-05.jpg" alt="Graphite drawing of a hooded anime character covering his face" loading="lazy"><span class="medium">Graphite</span><figcaption>Itadori Yuji Modulo</figcaption></figure>
+        <figure class="reveal zoom"><img src="images/art/art-06.jpg" alt="Graphite sketch of a smirking anime character in a hoodie" loading="lazy"><span class="medium">Graphite</span><figcaption>Itadori Yuji Modulo</figcaption></figure>
+        <figure class="reveal zoom"><img src="images/art/art-08.jpg" alt="Graphite drawing of a spiky-haired anime character on lined paper" loading="lazy"><span class="medium">Graphite</span><figcaption>Kurosaki Ichigo</figcaption></figure>
+        <figure class="reveal zoom"><img src="images/art/art-09.jpg" alt="Graphite portrait of an anime character with a high-collared uniform" loading="lazy"><span class="medium">Graphite</span><figcaption>Zenitsu Agatsuma</figcaption></figure>
+      </div>
+
+      <div class="art-exhibit">
+        <div class="reveal">
+          <h4>On display: "Art Sketching"</h4>
+          <p>My drawings were exhibited at school as <em>"Art Sketching: From the Collection of Arbrent John C. Dumat-ol."</em></p>
+        </div>
+        <div class="exhibit-grid">
+          <figure class="reveal zoom"><img src="images/art/art-10.jpg" alt="Table display of anime drawings with an Art Sketching sign" loading="lazy"><figcaption>The exhibit table</figcaption></figure>
+          <figure class="reveal zoom"><img src="images/art/art-11.jpg" alt="Arbrent holding up his drawings at the exhibit" loading="lazy" style="object-position:center 40%"><figcaption>Showing my drawings</figcaption></figure>
+          <figure class="reveal zoom"><img src="images/art/art-12.jpg" alt="Arbrent smiling beside his exhibit in the library" loading="lazy" style="object-position:center 40%"><figcaption>At the exhibit</figcaption></figure>
+        </div>
       </div>
     </div>
   </div>
@@ -214,8 +298,9 @@
       <figure class="g-wide reveal zoom"><img src="images/day1-preparation.jpg" alt="Students setting up tables in the gym" loading="lazy"><figcaption>Day 1: preparation</figcaption></figure>
       <figure class="reveal zoom"><img src="images/guest-speakers.jpg" alt="Guest speakers at the speakers' table" loading="lazy"><figcaption>Our guest speakers</figcaption></figure>
       <figure class="reveal zoom"><img src="images/topic.jpg" alt="Slide on programming languages for Android development" loading="lazy"><figcaption>Android development talk</figcaption></figure>
-      <figure class="g-wide reveal zoom"><img src="images/day2-session.jpg" alt="Students with laptops during the seminar" loading="lazy"><figcaption>Day 2: hands-on session</figcaption></figure>
-      <figure class="g-wide reveal zoom"><img src="images/day2-group.jpg" alt="Students coding on their laptops" loading="lazy"><figcaption>Coding together</figcaption></figure>
+      <figure class="g-wide g-tall reveal zoom"><img src="images/day2-certificate.jpg" alt="Arbrent smiling on stage holding his certificate of participation" loading="lazy" style="object-position:center 35%"><figcaption>Day 2: receiving my certificate</figcaption></figure>
+      <figure class="g-tall reveal zoom"><img src="images/day2-certificates-group.jpg" alt="Arbrent and two classmates holding their certificates in the gym" loading="lazy" style="object-position:center 70%"><figcaption>Day 2: certificates with classmates</figcaption></figure>
+      <figure class="g-tall reveal zoom"><img src="images/day2-group.jpg" style="object-position:right center" alt="Students coding on their laptops" loading="lazy"><figcaption>Coding together</figcaption></figure>
     </div>
   </div>
 </section>
@@ -254,17 +339,16 @@
     <div class="contact reveal zoom">
       <p class="eyebrow">Contact</p>
       <h2>Let's create something together.</h2>
-      <p class="lead">Need an illustration, a poster, a logo or a layout? I'm open to projects and collaborations.</p>
+      <p class="lead">Need a website, an illustration, a poster, a logo or a layout? As a web developer and graphic designer, I'm open to projects and collaborations.</p>
       <div class="btns">
-        <!-- TODO: replace with your real email and Facebook link -->
-        <a class="btn btn-main" href="mailto:youremail@example.com">Email me</a>
-        <a class="btn btn-ghost" href="#" target="_blank" rel="noopener">Facebook</a>
+        <a class="btn btn-main" href="mailto:ajdumatol3@gmail.com">Email me</a>
+        <a class="btn btn-ghost" href="https://www.facebook.com/aerlbrent.dumatol" target="_blank" rel="noopener">Facebook</a>
       </div>
     </div>
   </div>
 </section>
 
-<footer>© 2026 Arbrent John Dumat-ol · BSINT, NORSU-BSC</footer>
+<footer>© Arbrent John Dumat-ol · BSINT, NORSU-BSC</footer>
 
 <button class="to-top" id="toTop" aria-label="Back to top">↑</button>
 
