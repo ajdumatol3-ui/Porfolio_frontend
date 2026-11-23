@@ -117,18 +117,6 @@
     b.appendChild(span); setTimeout(() => span.remove(), 600);
   }));
 
-  /* Click burst anywhere */
-  const colors = ['#7ea6d8', '#3e6aa3', '#a9c8ea', '#c9b8f0', '#5b86c0'];
-  if (!reduce) document.addEventListener('click', e => {
-    for (let i = 0; i < 10; i++) {
-      const p = document.createElement('i');
-      p.className = 'burst';
-      const a = Math.random() * Math.PI * 2, d = 30 + Math.random() * 40;
-      p.style.cssText = `left:${e.clientX - 4}px;top:${e.clientY - 4}px;background:${colors[i % colors.length]};--dx:${Math.cos(a)*d}px;--dy:${Math.sin(a)*d}px;--r:${Math.random()*360}deg`;
-      document.body.appendChild(p); setTimeout(() => p.remove(), 700);
-    }
-  });
-
   /* 3D tilt for hero photo and project images */
   function tilt(el, max){
     if (reduce) return;
@@ -159,39 +147,49 @@
   stack.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); swapPhoto(); } });
   document.querySelectorAll('.tilt').forEach(el => tilt(el, 12));
 
-  /* Animated low-poly background in hero */
+  /* Night-sky starfield with shooting stars (fixed behind the whole page) */
   const cv = document.getElementById('poly'), ctx = cv.getContext('2d');
-  let pts = [], W, H;
-  function initPoly(){
-    W = cv.width = cv.offsetWidth; H = cv.height = cv.offsetHeight;
-    const n = Math.min(70, Math.floor(W * H / 16000));
-    pts = Array.from({length:n}, () => ({x:Math.random()*W, y:Math.random()*H, vx:(Math.random()-.5)*.35, vy:(Math.random()-.5)*.35}));
+  let stars = [], meteors = [], W, H, nextMeteor = performance.now() + 2200;
+  function initSky(){
+    W = cv.width = innerWidth; H = cv.height = innerHeight;
+    const n = Math.min(240, Math.floor(W * H / 5500));
+    stars = Array.from({length:n}, () => ({
+      x: Math.random() * W, y: Math.random() * H,
+      r: .4 + Math.random() * 1.3,
+      tw: Math.random() * Math.PI * 2,       // twinkle phase
+      sp: .3 + Math.random() * .8,           // twinkle speed
+      warm: Math.random() < .16              // a few warm golden stars
+    }));
   }
-  let mouse = {x:-999, y:-999};
-  cv.parentElement.addEventListener('mousemove', e => { const r = cv.getBoundingClientRect(); mouse = {x:e.clientX - r.left, y:e.clientY - r.top}; });
-  function drawPoly(){
+  function spawnMeteor(now){
+    const dir = Math.random() < .5 ? 1 : -1;
+    meteors.push({
+      x: W * (.1 + Math.random() * .8), y: H * Math.random() * .35,
+      vx: dir * (5 + Math.random() * 4), vy: 2.2 + Math.random() * 1.8, life: 1
+    });
+    nextMeteor = now + 2800 + Math.random() * 5200;
+  }
+  function drawSky(now){
     ctx.clearRect(0, 0, W, H);
-    for (const p of pts) {
-      p.x += p.vx; p.y += p.vy;
-      if (p.x < 0 || p.x > W) p.vx *= -1;
-      if (p.y < 0 || p.y > H) p.vy *= -1;
+    for (const s of stars) {
+      const a = .3 + .7 * (.5 + .5 * Math.sin(s.tw + now * .001 * s.sp));
+      ctx.fillStyle = s.warm ? `rgba(255,224,178,${a})` : `rgba(214,228,255,${a})`;
+      ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, 7); ctx.fill();
     }
-    for (let i = 0; i < pts.length; i++) {
-      for (let j = i + 1; j < pts.length; j++) {
-        const a = pts[i], b = pts[j], d = Math.hypot(a.x - b.x, a.y - b.y);
-        if (d < 140) {
-          const near = Math.hypot(a.x - mouse.x, a.y - mouse.y) < 160;
-          ctx.strokeStyle = near ? `rgba(62,106,163,${(1 - d/140) * .8})` : `rgba(126,166,216,${(1 - d/140) * .35})`;
-          ctx.lineWidth = near ? 1.2 : .7;
-          ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
-        }
-      }
+    if (now > nextMeteor && meteors.length < 2) spawnMeteor(now);
+    for (const m of meteors) {
+      m.x += m.vx; m.y += m.vy; m.life -= .011;
+      const g = ctx.createLinearGradient(m.x, m.y, m.x - m.vx * 14, m.y - m.vy * 14);
+      g.addColorStop(0, `rgba(255,255,255,${.9 * Math.max(0, m.life)})`);
+      g.addColorStop(1, 'rgba(180,230,200,0)');
+      ctx.strokeStyle = g; ctx.lineWidth = 1.6; ctx.lineCap = 'round';
+      ctx.beginPath(); ctx.moveTo(m.x, m.y); ctx.lineTo(m.x - m.vx * 14, m.y - m.vy * 14); ctx.stroke();
     }
-    for (const p of pts) { ctx.fillStyle = 'rgba(126,166,216,.85)'; ctx.beginPath(); ctx.arc(p.x, p.y, 1.8, 0, 7); ctx.fill(); }
-    requestAnimationFrame(drawPoly);
+    meteors = meteors.filter(m => m.life > 0 && m.x > -80 && m.x < W + 80 && m.y < H + 80);
   }
-  initPoly(); addEventListener('resize', initPoly);
-  if (!reduce) drawPoly();
+  function skyLoop(now){ drawSky(now); requestAnimationFrame(skyLoop); }
+  initSky(); addEventListener('resize', () => { initSky(); if (reduce) drawSky(0); });
+  if (!reduce) requestAnimationFrame(skyLoop); else drawSky(0);
 
   /* Lightbox for gallery and projects */
   /* Magazine page flipper (InDesign project) */
