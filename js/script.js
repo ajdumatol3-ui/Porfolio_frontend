@@ -10,6 +10,9 @@
     setTimeout(() => {
       document.getElementById('loader').classList.add('done');
       document.body.classList.remove('loading');
+      // Tell the anime.js effects (js/anime-effects.js) that the intro is finished
+      window.__introDone = true;
+      document.dispatchEvent(new Event('intro:done'));
     }, wait);
   });
 
