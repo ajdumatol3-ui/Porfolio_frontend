@@ -47,10 +47,10 @@ No frameworks or build tools. The site runs on plain HTML, CSS and JavaScript.
 - Glass-style navigation bar that hides on scroll and reappears when the mouse is near the top
 - Active menu highlighting for the current section
 - Typing text effect, count-up numbers and skill bars
-- Japanese night-sky theme: twinkling starfield with shooting stars on canvas, a glowing moon and Japanese typography accents
+- Low-poly network background on canvas that reacts to the mouse
 - 3D tilt and shine on images
 - Lightbox viewer with keyboard (← → Esc) support
-- Button ripple effect
+- Click particle burst and button ripple
 - Fully responsive layout with a mobile menu
 
 **anime.js**
@@ -58,7 +58,7 @@ No frameworks or build tools. The site runs on plain HTML, CSS and JavaScript.
 - Section headings rise letter by letter on scroll
 - Tool badges spin smoothly on hover
 - Draggable skill badges on the hero photo that spring back
-- Big colorful fireworks on every click, with a multi-shell finale on the Contact card
+- Fireworks when clicking the Contact card
 
 **Accessibility**
 - Respects the "reduce motion" setting (animations turn off)

@@ -47,7 +47,7 @@
   imgs.forEach(img => { if (img) img.loading = 'eager'; });
 
   // A slightly different tilt for each print in the stack
-  const tilt = figs.map((_, i) => i === 0 ? 0 : (i % 2 ? 1 : -1) * (1.2 + (i * 7 % 5) * 0.5));
+  const tilt = figs.map((_, i) => (i % 2 ? 1 : -1) * (1.2 + (i * 7 % 5) * 0.5));
 
   /* ---------- grid layouts (in grid units) ---------- */
   // [column, row, width, height]
